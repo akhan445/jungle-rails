@@ -1,2 +1,31 @@
-<h1>Admin::Dashboard#show</h1>
-<p>Find me in app/views/admin/dashboard/show.html.erb</p>
+<h1>Admin Dashboard</h1>
+<div class="panel panel-default">
+  <div class="panel-heading">Products</div>
+  <div class="panel-body">
+    <p><strong>Total Categories: </strong><%= @categories.size %></p>
+    <p><strong>Total Products: </strong><%= @quantities %></p>
+  <table class="table">
+    <thead>
+    <h4 class="pager">Products Summary</h4>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products.each_with_index do |product, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= product.name %></td>
+          <td><%= product.category.name %></td>
+          <td><%= product.quantity %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= link_to "View All", "admin/products", class: 'nav nav-pills' %>
+  </div>
+</div>
+
