@@ -71,6 +71,60 @@ RSpec.describe User, type: :model do
       @user.password_confirmation = "pass1234"
       expect(@user).to be_valid
     end
+  end
 
+  describe '.authenticate_with_credentials' do
+    before(:example) do
+      @user = User.new(
+        first_name: "John",
+        last_name: "Doe",
+        email: "johndoe@email.com",
+        password: "password123",
+        password_confirmation: "password123"
+      )
+    end
+
+    it "should validate when the correct user credentials are entered" do
+      @user.save
+
+      authenticated_user = User.authenticate_with_credentials("johndoe@email.com", "password123")
+
+      expect(authenticated_user).to be_truthy
+      expect(authenticated_user).to be_an_instance_of(User)
+    end
+
+    it "should return nil if the user is not in the database" do
+      @user.save
+
+      authenticated_user = User.authenticate_with_credentials("jillmayer@email.com", "pass1122")
+
+      expect(authenticated_user).to be_nil
+    end
+
+    it "should not authenticate a user with wrong password" do
+      @user.save
+
+      authenticated_user = User.authenticate_with_credentials("johndoe@email.com", "password1234")
+
+      expect(authenticated_user).to be_nil
+    end
+
+    it "should still authenticate a user with leading and/or trailing spaces in email field" do
+      @user.save
+
+      authenticated_user = User.authenticate_with_credentials("  johndoe@email.com ", "password123")
+
+      expect(authenticated_user).to be_truthy
+      expect(authenticated_user).to be_an_instance_of(User)
+    end
+
+    it "should be case insensitive when authenticating a user (ie. example@domain.com == EXAMPLe@DOMAIN.CoM)" do
+      @user.save
+
+      authenticated_user = User.authenticate_with_credentials("joHNdoe@email.coM", "password123")
+
+      expect(authenticated_user).to be_truthy
+      expect(authenticated_user).to be_an_instance_of(User)
+    end
   end
 end
